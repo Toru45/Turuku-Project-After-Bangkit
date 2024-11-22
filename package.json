@@ -1,27 +1,42 @@
 {
   "name": "cloud-computing-bangkit",
   "version": "1.0.0",
-  "description": "Repo untuk tim cloud computing",
+  "description": "Repository Tim Cloud Computing",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Toru45/Cloud-Computing-BANGKIT.git"
+    "url": "git+https://github.com/Turuku-Bangkit-Capstone-Project/Cloud-Computing-BANGKIT.git"
   },
   "keywords": [
-    "CC",
     "Bangkit",
-    "Cloud",
+    "capstone",
+    "cloud",
     "computing",
+    "turuku",
     "google",
+    "cloud",
     "cloud"
   ],
-  "author": "Faiq, Rangga",
+  "author": "C242-PS070 Cloud Computing Team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Toru45/Cloud-Computing-BANGKIT/issues"
+    "url": "https://github.com/Turuku-Bangkit-Capstone-Project/Cloud-Computing-BANGKIT/issues"
   },
-  "homepage": "https://github.com/Toru45/Cloud-Computing-BANGKIT#readme"
+  "homepage": "https://github.com/Turuku-Bangkit-Capstone-Project/Cloud-Computing-BANGKIT#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.1",
+    "firebase-admin": "^13.0.1",
+    "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "eslint": "^9.15.0",
+    "globals": "^15.12.0",
+    "nodemon": "^3.1.7"
+  }
 }
