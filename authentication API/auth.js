@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-const { db, auth } = require("../firebase");
+const { db, auth } = require("./firebase");
 
 const router = express.Router();
 
