@@ -130,3 +130,4 @@ dist
 .pnp.*
 .idea
 serviceAccountKey.json
+firbase.js
