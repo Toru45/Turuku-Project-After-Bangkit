@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import Users from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
@@ -5,7 +6,9 @@ import jwt from "jsonwebtoken"
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await Users.findAll();
+    const users = await Users.findAll({
+      attributes: ['id', 'name', 'email']
+    });
     res.json(users);
   } catch (error) {
     console.log(error.message);
@@ -69,7 +72,7 @@ export const login = async (req, res) => {
 
     //membuat akses token
     const accessToken = jwt.sign({userId, name, email}, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: '20s'
+      expiresIn: '5m'
     });
 
     //membuat refresh token
