@@ -83,6 +83,14 @@ export const login = async (req, res) => {
         id: userId
       }
     })
+    //membuat http only cookie ke client
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000 //expired dalam 1 hari
+    });
+
+    //mengirimkan respon ke client access token
+    res.json({accessToken});
 
   } catch (error) {
     res.status(404).json({msg: "Email tidak ditemukan"});
