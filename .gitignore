@@ -131,3 +131,4 @@ dist
 serviceAccountKey.json
 firebase.js
 Database.js
+request.rest

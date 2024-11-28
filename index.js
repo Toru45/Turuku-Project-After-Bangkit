@@ -1,8 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import db from './config/Database.js';
-import router from './routes/index.js';
 import cookieParser from 'cookie-parser';
+import router from './routes/index.js';
 dotenv.config();
 
 
@@ -17,8 +17,9 @@ try {
 
 //middleware
 app.use(express.json());
-app.use(router)
 app.use(cookieParser())
+app.use(router)
+
 
 
 
