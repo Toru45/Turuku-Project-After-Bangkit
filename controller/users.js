@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { where } from "sequelize";
 import Users from "../models/userModel.js";
 import UserData from "../models/userdataModel.js";
@@ -6,17 +5,26 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 
 
-export const getUsers = async (req, res) => {
+export const users = async (req, res) => {
   try {
-    const users = await Users.findAll({
-      attributes: ['id', 'name', 'email']
+    // Mengambil userId dari request, pastikan userId sudah tersedia
+    const userId = req.userId; // Asumsi userId sudah diset sebelumnya
+
+    // Mencari user berdasarkan userId
+    const user = await Users.findOne({
+      attributes: ['name'],
+      where: { id: userId }
     });
-    res.json(users);
+
+    if (!user) return res.status(404).json({ msg: "User  tidak ditemukan" });
+
+    // Mengirimkan nama user yang sedang login
+    res.json({ name: user.name });
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
   }
 }
-
 //function register
 export const register = async (req, res) => {
   const {
@@ -31,6 +39,11 @@ export const register = async (req, res) => {
 
   if (!email.includes("@")) {
     return res.status(400).json({ msg: "Email harus memiliki simbol '@'" });
+  }
+
+  const existingUser  = await Users.findOne({ where: { email } });
+  if (existingUser ) {
+    return res.status(400).json({ msg: "Email telah terdaftar" });
   }
 
   //validasi password mnggunakan regex harus memiliki minimal 1 angka,1 huruf, 1 symbol dan minimal 8 huruf
@@ -98,7 +111,7 @@ export const login = async (req, res) => {
     res.json({ accessToken });
 
   } catch (error) {
-    res.status(404).json({ msg: "Email tidak ditemukan" });
+    res.status(404).json({ msg: `${error} Email tidak ditemukan` });
   }
 }
 

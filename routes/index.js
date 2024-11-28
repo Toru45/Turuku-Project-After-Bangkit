@@ -1,16 +1,16 @@
 import express from 'express';
-import { getUsers, register, login, logout, userdata } from '../controller/users.js';
+import { users, register, login, logout, userdata } from '../controller/users.js';
 import { verifyToken } from '../middleware/verifyToken..js';
 import { refreshToken } from '../controller/refreshToken.js';
 
 const router = express.Router(); 
 
-router.get('/users',verifyToken,getUsers)
-router.post('/register',register)
-router.post('/login',login)
-router.get('/token',refreshToken)
-router.delete('/logout',logout)
-router.post('/userdata', userdata)
+router.get('/api/v1/users',verifyToken,users)
+router.post('/api/v1/register',register)
+router.post('/api/v1/login',login)
+router.get('/api/v1/refreshtoken',refreshToken)
+router.delete('/api/v1/logout',logout)
+router.post('/api/v1/userdata', userdata)
 
 export default router
 
