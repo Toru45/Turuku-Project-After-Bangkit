@@ -120,6 +120,9 @@ export const userdata = async (req, res) => {
   try {
     const userId = req.userId;
     const { age, gender, bedTime, wakeupTime } = req.body;
+    if (gender !== "Male" && gender !== "Female") {
+      return res.status(400).json({ msg: "Gender harus berupa 'Male' atau 'Female'" });
+    }
 
     // Validasi input
     if (!userId || !age || !gender || !bedTime || !wakeupTime) {
