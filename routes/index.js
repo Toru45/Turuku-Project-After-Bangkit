@@ -10,7 +10,7 @@ router.post('/api/v1/register',register)
 router.post('/api/v1/login',login)
 router.get('/api/v1/token',refreshToken)
 router.delete('/api/v1/logout',logout)
-router.post('/api/v1/userdata', userdata)
+router.post('/api/v1/userdata', verifyToken,userdata)
 
 export default router
 
