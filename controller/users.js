@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken"
 export const users = async (req, res) => {
   try {
     // Mengambil userId dari request, pastikan userId sudah tersedia
-    const userId = req.userId; // Asumsi userId sudah diset sebelumnya
+    const userId = req.userId;
 
     // Mencari user berdasarkan userId
     const user = await Users.findOne({
@@ -118,13 +118,13 @@ export const login = async (req, res) => {
 //menambahkan userdata ke db
 export const userdata = async (req, res) => {
   try {
-    const { userId, age, gender, bedTime, wakeupTime } = req.body;
+    const userId = req.userId;
+    const { age, gender, bedTime, wakeupTime } = req.body;
 
     // Validasi input
     if (!userId || !age || !gender || !bedTime || !wakeupTime) {
       return res.status(400).json({ msg: "Semua field wajib diisi" });
     }
-    console.log(gender)
 
     const userdata = await UserData.findAll(
       {
