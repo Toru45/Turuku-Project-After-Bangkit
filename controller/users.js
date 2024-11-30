@@ -114,6 +114,7 @@ export const login = async (req, res) => {
     res.status(404).json({ msg: `${error} Email tidak ditemukan` });
   }
 }
+/*
 
 //menambahkan userdata ke db
 export const userdata = async (req, res) => {
@@ -161,6 +162,7 @@ export const userdata = async (req, res) => {
   }
 };
 
+*/
 
 //logout
 export const logout = async (req, res) => {
