@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "startDev": "nodemon index.js",
-    "start" : "node index.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/Turuku-Bangkit-Capstone-Project/Cloud-Computing-BANGKIT#readme",
   "dependencies": {
+    "@google-cloud/secret-manager": "^5.6.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
