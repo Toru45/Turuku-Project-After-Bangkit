@@ -34,6 +34,10 @@ export const register = async (req, res) => {
     confPassword
   } = req.body;
 
+  if (!name || !email || !password || !confPassword) {
+    return res.status(400).json({ msg: "Semua kolom wajib diisi" });
+  }
+
   if (password !== confPassword)
     return res.status(400).json({ msg: "Password dan Confirm Password tidak cocok, silakan coba lagi" });
 
@@ -121,6 +125,9 @@ export const userdata = async (req, res) => {
   try {
     const userId = req.userId;
     const { age, gender, bedTime, wakeupTime } = req.body;
+    if (gender !== "Male" && gender !== "Female") {
+      return res.status(400).json({ msg: "Gender harus berupa 'Male' atau 'Female'" });
+    }
 
     // Validasi input
     if (!userId || !age || !gender || !bedTime || !wakeupTime) {
