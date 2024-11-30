@@ -36,12 +36,9 @@ export const register = async (req, res) => {
 
   if (!name || !email || !password || !confPassword) {
     return res.status(400).json({ msg: "Semua kolom wajib diisi" });
-  }
-
-  if (password !== confPassword)
+  } else if (password !== confPassword) {
     return res.status(400).json({ msg: "Password dan Confirm Password tidak cocok, silakan coba lagi" });
-
-  if (!email.includes("@")) {
+  } else if (!email.includes("@")) {
     return res.status(400).json({ msg: "Email harus memiliki simbol '@'" });
   }
 
