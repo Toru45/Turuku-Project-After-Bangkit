@@ -34,6 +34,10 @@ export const register = async (req, res) => {
     confPassword
   } = req.body;
 
+  if (!name || !email || !password || !confPassword) {
+    return res.status(400).json({ msg: "Semua kolom wajib diisi" });
+  }
+
   if (password !== confPassword)
     return res.status(400).json({ msg: "Password dan Confirm Password tidak cocok, silakan coba lagi" });
 
