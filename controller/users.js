@@ -105,6 +105,7 @@ export const login = async (req, res) => {
     //membuat http only cookie ke client
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
+      secure: true,
       maxAge: 24 * 60 * 60 * 1000 //expired dalam 1 hari
     });
 

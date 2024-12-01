@@ -2,7 +2,8 @@ FROM node:20.17
 
 WORKDIR /app
 
-COPY package*.json .
+COPY package*.json ./
 RUN npm install
 COPY . .
-CMD node index.js
+EXPOSE 3000
+CMD ["node", "index.js"]

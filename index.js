@@ -8,12 +8,16 @@ dotenv.config();
 
 const app = express();
 
-try {
-    await db.authenticate();
-    console.log('Connection has been established successfully.')
-} catch (error) {
-    console.error('Unable to connect to the database:', error);
-}
+const startServer = async () => {
+    try {
+        await db.authenticate();
+        console.log('Connection to database has been established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+};
+
+startServer();
 
 //middleware
 app.use(express.json());
