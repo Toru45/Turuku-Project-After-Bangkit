@@ -1,4 +1,3 @@
-# Logs
 logs
 *.log
 npm-debug.log*
@@ -128,7 +127,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .idea
-Database.js
+serviceAccountKey.json
+firebase.js
 request.rest
 Turuku Open API.YAML
+.env
 Turuku-service-account.json
+Database.js
