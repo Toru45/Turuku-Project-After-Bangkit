@@ -1,5 +1,5 @@
 # TEAM CLOUD COMPUTING
-This is the repository for cloud computing C22-PS064 team. It contains all the necessary files and documents for the project.
+This is the repository LOCAL DEVELOPMENT cloud computing C22-PS064 team. It contains all the necessary files and documents for the project.
 
 
 ## MEET OUR TEAM!
