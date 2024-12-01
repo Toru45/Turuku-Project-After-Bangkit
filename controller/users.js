@@ -3,6 +3,7 @@ import Users from "../models/userModel.js";
 import UserData from "../models/userdataModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '../config/Database.js';
 
 
 export const users = async (req, res) => {
@@ -87,12 +88,12 @@ export const login = async (req, res) => {
     const email = user[0].email;
 
     //membuat akses token
-    const accessToken = jwt.sign({ userId, name, email }, process.env.ACCESS_TOKEN_SECRET, {
+    const accessToken = jwt.sign({ userId, name, email }, ACCESS_TOKEN_SECRET, {
       expiresIn: '5m'
     });
 
     //membuat refresh token
-    const refreshToken = jwt.sign({ userId, name, email }, process.env.REFRESH_TOKEN_SECRET, {
+    const refreshToken = jwt.sign({ userId, name, email }, REFRESH_TOKEN_SECRET, {
       expiresIn: '1d'
     });
 
@@ -105,7 +106,7 @@ export const login = async (req, res) => {
     //membuat http only cookie ke client
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: true, //matiin kalau di lokal
       maxAge: 24 * 60 * 60 * 1000 //expired dalam 1 hari
     });
 
