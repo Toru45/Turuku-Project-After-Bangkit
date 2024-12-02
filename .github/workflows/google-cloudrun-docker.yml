@@ -4,7 +4,7 @@
 #
 # To configure this workflow:
 #
-# 1. Enable the following Google Cloud APIs:
+# 1. Enable the following Google Cloud APIs: 
 #
 #    - Artifact Registry (artifactregistry.googleapis.com)
 #    - Cloud Run (run.googleapis.com)
