@@ -44,7 +44,7 @@ jobs:
 
       - name: 'Build and Push Container'
         run: |-
-          docker build -t "${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.SERVICE }}:${{ github.sha }" ./
+          docker build -t "${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.SERVICE }}:${{ github.sha }}" ./
           docker push "${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.SERVICE }}:${{ github.sha }" 
           
       - name: 'Deploy to Cloud Run'
