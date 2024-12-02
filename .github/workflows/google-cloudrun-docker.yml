@@ -26,6 +26,7 @@
 #    https://cloud.google.com/iam/docs/manage-access-other-resources
 #
 # 3. Change the values in the "env" block to match your values.
+
 name: 'Debug Environment Variables'
   run: |
     echo "WORKLOAD_IDENTITY_PROVIDER=${{ env.WORKLOAD_IDENTITY_PROVIDER }}"
