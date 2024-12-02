@@ -11,7 +11,7 @@
 #    - IAM Credentials API (iamcredentials.googleapis.com)
 #
 #    You can learn more about enabling APIs at
-#    https://support.google.com/googleapi/answer/6158841.
+#    https://support.google.com/googleapi/answer/615884
 #
 # 2. Create and configure a Workload Identity Provider for GitHub:
 #    https://github.com/google-github-actions/auth#preferred-direct-workload-identity-federation.
