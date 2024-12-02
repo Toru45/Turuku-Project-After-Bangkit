@@ -69,9 +69,9 @@ jobs:
 
       # BEGIN - Docker auth and build   
       - name: 'Docker Auth'
-        run: |-
+        run: |
          gcloud auth configure-docker "${{ secrets.REGION }}-docker.pkg.dev"
-
+         
 
       - name: 'Build and Push Container'
         run: |-
