@@ -70,7 +70,7 @@ jobs:
       # BEGIN - Docker auth and build   
       - name: 'Docker Auth'
         run: |
-         gcloud auth configure-docker "${{ secrets.REGION }}-docker.pkg.dev"
+         gcloud auth configure-docker "asia-southeast2-docker.pkg.dev"
          
 
       - name: 'Build and Push Container'
