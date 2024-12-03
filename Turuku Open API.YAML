@@ -1,0 +1,235 @@
+openapi: 3..0
+info:
+  title: Turuku OPEN API
+  version: 1.0
+  description: Keleksi Turuku API
+paths:
+  /users:
+    get:
+      summary: Mendapatkan informasi pengguna yang sedang login
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Token JWT untuk mengautentikasi pengguna
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Berhasil mendapatkan informasi pengguna
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+        '404':
+          description: Pengguna tidak ditemukan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        '500':
+          description: Terjadi kesalahan pada server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+
+  /register:
+    post:
+      summary: Mendaftar pengguna baru
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                confPassword:
+                  type: string
+      responses:
+        '200':
+          description: Registrasi berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        '400':
+          description: Kesalahan validasi input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        '500':
+          description: Terjadi kesalahan pada server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+
+  /login:
+    post:
+      summary: Masuk ke akun pengguna
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        '400':
+          description: Password salah atau email tidak ditemukan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        '404':
+          description: Email tidak ditemukan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+
+  /userdata:
+    post:
+      summary: Menambahkan atau memperbarui data pengguna
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                age:
+                  type: integer
+                gender:
+                  type: string
+                bedTime:
+                  type: string
+                wakeupTime:
+                  type: string
+      responses:
+        '200':
+          description: Data pengguna berhasil diperbarui
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        '400':
+          description: Kesalahan validasi input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        '500':
+          description: Terjadi kesalahan pada server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+
+  /logout:
+    delete:
+      summary: Keluar dari akun pengguna
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Token JWT untuk mengautentikasi pengguna
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Logout berhasil
+        '204':
+          description: Tidak ada token untuk dihapus
+        '404':
+          description: Pengguna tidak ditemukan
+
+  /token:
+    get:
+      summary: Mendapatkan token baru menggunakan refresh token
+      responses:
+        '200':
+          description: Token berhasil diperbarui
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        '401':
+          description: Refresh token tidak valid atau telah kedaluwarsa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        '500':
+          description: Terjadi kesalahan pada server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
