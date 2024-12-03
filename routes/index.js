@@ -1,5 +1,5 @@
 import express from 'express';
-import { users, register, login, logout, userdata } from '../controller/users.js';
+import { users, register, login, logout, userdata,changePassword } from '../controller/users.js';
 import { verifyToken } from '../middleware/verifyToken..js';
 import { refreshToken } from '../controller/refreshToken.js';
 
@@ -11,6 +11,7 @@ router.post('/api/v1/login',login)
 router.get('/api/v1/token',refreshToken)
 router.delete('/api/v1/logout',logout)
 router.post('/api/v1/userdata', verifyToken,userdata)
+router.patch('/api/v1/changePassword', verifyToken, changePassword)
 
 export default router
 

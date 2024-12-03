@@ -3,10 +3,18 @@ import dotenv from 'dotenv';
 import db from './config/Database.js';
 import cookieParser from 'cookie-parser';
 import router from './routes/index.js';
+import rateLimit from 'express-rate-limit';
+
 dotenv.config();
 
 
 const app = express();
+const limiter =rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 40, // Limit to 40 request per 15 minutes
+    message: 'Too many requests from this IP, please try again later!'
+})
+app.use(limiter)
 
 const startServer = async () => {
     try {
