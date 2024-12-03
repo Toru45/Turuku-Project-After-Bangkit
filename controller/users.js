@@ -166,6 +166,43 @@ export const userdata = async (req, res) => {
 };
 
 
+// /changePassword
+export const changePassword = async (req, res) => {
+  try {
+    const userId = req.userId; 
+    const { currentPassword, newPassword, confNewPassword } = req.body;
+
+    if (!currentPassword || !newPassword || !confNewPassword) {
+      return res.status(400).json({ msg: "Semua kolom input wajib diisi" });
+    } else if (newPassword !== confNewPassword) {
+      return res.status(400).json({ msg: "Password baru dan Confirm Password tidak cocok, silakan periksa dan coba lagi" });
+    }
+
+    // Validasi password baru menggunakan regex
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({ msg: "Password baru harus memiliki minimal 8 karakter dan setidaknya satu angka" });
+    }
+
+    const user = await Users.findOne({ where: { id: userId } });
+    if (!user) return res.status(404).json({ msg: "User  tidak ditemukan" });
+
+    
+    const match = await bcrypt.compare(currentPassword, user.password);
+    if (!match) return res.status(400).json({ msg: "Password saat ini salah" });
+    const salt = await bcrypt.genSalt();
+    const hashNewPassword = await bcrypt.hash(newPassword, salt);
+
+    
+    await Users.update({ password: hashNewPassword }, { where: { id: userId } });
+
+    res.status(200).json({ msg: "Password berhasil diperbarui" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+  }
+}
+
 //logout
 export const logout = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
