@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
 
-const UserData = db.define(
-  "userdata",
+const History = db.define(
+  "history",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -12,15 +12,24 @@ const UserData = db.define(
     id_user: {
       type: DataTypes.INTEGER,
     },
-    age: {
+    bedtime: {
+      type: DataTypes.TIME,
+    },
+    wakeuptime: {
+      type: DataTypes.TIME,
+    },
+    physical_activity_level: {
       type: DataTypes.INTEGER,
     },
-    gender: {
+    daily_steps: {
+      type: DataTypes.INTEGER,
+    },
+    sleep_recomendation: {
       type: DataTypes.STRING,
     },
-    chronotype: {
-      type: DataTypes.STRING,
-    },
+    // chronotypes: {
+    //   type: DataTypes.STRING,
+    // },
     refresh_token: {
       type: DataTypes.STRING,
     },
@@ -33,4 +42,4 @@ const UserData = db.define(
   }
 );
 
-export default UserData;
+export default History;
