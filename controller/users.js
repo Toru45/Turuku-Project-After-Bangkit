@@ -112,7 +112,7 @@ export const login = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false, // set to false for local development
+      secure: true, // set to false for local development
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
