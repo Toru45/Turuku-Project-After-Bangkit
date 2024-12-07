@@ -21,9 +21,6 @@ const UserData = db.define(
     chronotype: {
       type: DataTypes.STRING,
     },
-    refresh_token: {
-      type: DataTypes.STRING,
-    },
   },
   {
     freezeTableName: true,

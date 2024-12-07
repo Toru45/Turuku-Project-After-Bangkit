@@ -30,9 +30,6 @@ const History = db.define(
     // chronotypes: {
     //   type: DataTypes.STRING,
     // },
-    refresh_token: {
-      type: DataTypes.STRING,
-    },
   },
   {
     freezeTableName: true,

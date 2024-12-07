@@ -1,4 +1,3 @@
-// import { where } from "sequelize";
 import Users from "../models/userModel.js";
 import UserData from "../models/userdataModel.js";
 import History from "../models/historyModel.js";
@@ -130,23 +129,19 @@ export const login = async (req, res) => {
 };
 
 //menambahkan userdata ke db
-export const createUserDataAndHistory = async (req, res) => {
+export const saveUserData = async (req, res) => {
   try {
     const refresh_token = req.cookies.refreshToken;
 
-    // Jika refresh token tidak ditemukan akan mengembalikan status 401 Token tidak ditemukans
     if (!refresh_token) {
       return res.status(401).json({ msg: "Token tidak ditemukan" });
     }
 
-    // Cari user berdasarkan refresh token
     const user = await Users.findOne({
       where: {
         refresh_token: refresh_token,
       },
     });
-
-    // console.log(user);
 
     if (!user) {
       return res.status(404).json({ msg: "User tidak ditemukan" });
@@ -154,84 +149,114 @@ export const createUserDataAndHistory = async (req, res) => {
 
     const { age, gender, chronotype } = req.body;
 
-    // Validasi inputan
     if (!age || !gender) {
       return res.status(400).json({ msg: "Semua field wajib diisi" });
     }
 
-    if (gender !== "Male" && gender !== "Female") {
-      return res
-        .status(400)
-        .json({ msg: "Gender harus berupa 'Male' atau 'Female'" });
+    if (gender !== "0" && gender !== "1") {
+      return res.status(400).json({
+        msg: "Gender harus berupa '0'(perempuan) atau '1'(laki-laki)",
+      });
     }
 
-    // Create userData kedalam tabel UserData dengan id yang unik
-    const id = (await UserData.count()) + 1;
-    await UserData.create({
-      id: id,
-      id_user: user.id,
-      refresh_token: refresh_token,
-      age: age,
-      gender: gender,
-      chronotype: chronotype,
-      bed_time: null,
-      wakeup_time: null,
-      physical_activity_level: null,
-      daily_steps: null,
+    const existingUserData = await UserData.findOne({
+      where: { id_user: user.id },
     });
 
-    const { bedtime, wakeuptime, sleep_recomendation, physical_activity_level, daily_steps } =
-      req.body;
-
-    if (!bedtime || !wakeuptime || !physical_activity_level || !daily_steps) {
-      return res.status(400).json({ msg: "Semua field wajib diisi" });
+    if (existingUserData) {
+      await UserData.update(
+        {
+          age: age,
+          gender: gender,
+          chronotype: chronotype || null,
+        },
+        {
+          where: { id_user: user.id },
+        }
+      );
+    } else {
+      await UserData.create({
+        id_user: user.id,
+        age: age,
+        gender: gender,
+        chronotype: chronotype || null,
+      });
     }
-    // const sleep_recomendation = 8; // Sesuaikan dengan  inputan dari ML model
 
-    // Create data baru ke dalam tabel History dengan id yang unik
-    const historyId = await History.count() + 1;
-    await History.create({
-      id: historyId,
-      id_user: user.id,
-      refresh_token: refresh_token,
-      bedtime: bedtime,
-      wakeuptime: wakeuptime,
-      physical_activity_level: physical_activity_level,
-      daily_steps: daily_steps,
-      sleep_recomendation: sleep_recomendation,
-    });
-
-    // console.log(createHistory);
-    res.json({ msg: "Data berhasil disimpan" });
+    res.json({ msg: "Data User berhasil disimpan atau diperbarui" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Terjadi kesalahan pada server" });
   }
 };
 
-//function get user History
-export const getUserHistory = async (req, res) => {
+//menyimpan history user
+export const saveUserHistory = async (req, res) => {
   try {
-    // Ambil refresh token dari cookie
-    const cookie = req.cookies.refreshToken;
-    // Jika refresh token tidak ditemukan akan mengembalikan status 401 Token tidak ditemukan
-    if (!cookie) {
+    const refresh_token = req.cookies.refreshToken;
+
+    if (!refresh_token) {
       return res.status(401).json({ msg: "Token tidak ditemukan" });
     }
 
-    // Ambil table data user berdasarkan refresh token(cookie)
     const user = await Users.findOne({
       where: {
-        refresh_token: cookie,
+        refresh_token: refresh_token,
       },
     });
 
-    //  Ambil table data history berdasarkan refresh token
+    if (!user) {
+      return res.status(404).json({ msg: "User tidak ditemukan" });
+    }
+
+    const {
+      bedtime,
+      wakeuptime,
+      sleep_recomendation,
+      physical_activity_level,
+      daily_steps,
+    } = req.body;
+
+    if (!bedtime || !wakeuptime || !physical_activity_level || !daily_steps) {
+      return res.status(400).json({ msg: "Semua field wajib diisi" });
+    }
+
+    await History.create({
+      id_user: user.id,
+      bedtime: bedtime,
+      wakeuptime: wakeuptime,
+      physical_activity_level: physical_activity_level,
+      daily_steps: daily_steps,
+      sleep_recomendation: sleep_recomendation,
+    });
+    res.json({ msg: "Data History berhasil disimpan" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+  }
+};
+
+
+//function get user History
+export const getUserHistory = async (req, res) => {
+  try {
+    const refresh_token = req.cookies.refreshToken;
+    if (!refresh_token) {
+      return res.status(401).json({ msg: "Token tidak ditemukan" });
+    }
+
+    let userId;
+    jwt.verify(refresh_token, REFRESH_TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ msg: "Token tidak valid" });
+      }
+      userId = decoded.userId; 
+    });
+
     const userHistory = await History.findAll({
       where: {
-        refresh_token: user.refresh_token,
+        id_user: userId,
       },
-
       attributes: [
         "id",
         "id_user",
@@ -243,7 +268,7 @@ export const getUserHistory = async (req, res) => {
         "created_at",
         "updated_at",
       ],
-      order: [["created_at", "DESC"]], // Order by newest first
+      order: [["created_at", "DESC"]], 
     });
 
     if (!userHistory || userHistory.length === 0) {
@@ -257,7 +282,6 @@ export const getUserHistory = async (req, res) => {
   }
 };
 
-// /changePassword
 export const changePassword = async (req, res) => {
   try {
     const userId = req.userId;
@@ -271,7 +295,6 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    // Validasi password baru menggunakan regex
     const passwordRegex =
       /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
     if (!passwordRegex.test(newPassword)) {
@@ -323,5 +346,3 @@ export const logout = async (req, res) => {
   res.clearCookie("refreshToken");
   return res.sendStatus(200);
 };
-
-//test 4
