@@ -130,4 +130,4 @@ dist
 .idea
 request.rest
 Turuku-service-account.json
-
+*.rest
