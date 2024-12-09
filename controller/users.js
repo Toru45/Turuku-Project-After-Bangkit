@@ -351,8 +351,7 @@ export const logout = async (req, res) => {
 
 export const chronotype = async (req, res)  => {
   try {
-    const userId = req.userId; // Ambil userId dari token
-    // Ambil data history terbaru untuk user
+    const userId = req.userId; 
     const latestHistory = await History.findOne({
       where: { id_user: userId },
       order: [['created_at', 'DESC']],
@@ -362,19 +361,19 @@ export const chronotype = async (req, res)  => {
       return res.status(404).json({ msg: "Data history tidak ditemukan" });
     }
 
-    // Ambil wakeuptime dan bedtime
-    const wakeupHour = parseInt(latestHistory.wakeuptime.split(':')[0]); // Ambil jam dari wakeuptime dan konversi ke integer
+
+    const wakeupHour = parseInt(latestHistory.wakeuptime.split(':')[0]); 
     const bedtimeHour = parseInt(latestHistory.bedtime.split(':')[0]); 
 
     // Kirim data ke API Flask
-    const response = await axios.post('http://127.0.0.1:5000/chronotype', {
+    const response = await axios.post('https://turuku-ml-api-800638181621.asia-southeast2.run.app/chronotype', {
       wakeup_hour: wakeupHour,
       bedtime_hour: bedtimeHour,
     });
 
-    const chronotypeResponse = response.data.chronotype; // Ambil chronotype dari response
+    const chronotypeResponse = response.data.chronotype; 
 
-    // Mapping chronotype ke angka
+   
     let chronotypeValue;
     switch (chronotypeResponse) {
       case 'Bear':
@@ -393,7 +392,6 @@ export const chronotype = async (req, res)  => {
         return res.status(400).json({ msg: "Chronotype tidak valid" });
     }
 
-    // Update chronotype di tabel userdata
     await UserData.update(
       { chronotype: chronotypeValue },
       { where: { id_user: userId } }
@@ -406,3 +404,52 @@ export const chronotype = async (req, res)  => {
   }
 };
 
+
+export const sleeprecomenadation = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const latestHistory = await History.findOne({
+      where: { id_user: userId },
+      order: [['created_at', 'DESC']],
+    });
+
+    if (!latestHistory) {
+      return res.status(404).json({ msg: "Data history tidak ditemukan" });
+    }
+
+    const userData = await UserData.findOne({
+      where: { id_user: userId },
+    });
+
+    if (!userData) {
+      return res.status(404).json({ msg: "Data userdata tidak ditemukan" });
+    }
+
+    const dataToSend = {
+      daily_steps: parseFloat((latestHistory.daily_steps / 1000).toFixed(3)), 
+      physical_activity_level: parseInt(latestHistory.physical_activity_level, 10),
+      age: parseInt(userData.age,10),
+      gender: parseInt(userData.gender,10),
+      chronotype: parseInt(userData.chronotype,10),
+    };
+    console.log("Data yang akan dikirim ke API Flask:", dataToSend);
+
+    
+
+    // Kirim data ke API Flask
+    const response = await axios.post('https://turuku-ml-api-800638181621.asia-southeast2.run.app/sleep', dataToSend);
+
+    const recommendedSleepDuration = response.data.recommended_sleep_duration;
+
+
+    await History.update(
+      { sleep_recomendation: recommendedSleepDuration },
+      { where: { id: latestHistory.id } } 
+    );
+
+    res.json({ msg: "Data berhasil dikirim dan disimpan", recommended_sleep_duration: recommendedSleepDuration });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+  }
+};
