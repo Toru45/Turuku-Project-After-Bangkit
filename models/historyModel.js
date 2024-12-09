@@ -26,10 +26,7 @@ const History = db.define(
     },
     sleep_recomendation: {
       type: DataTypes.STRING,
-    },
-    // chronotypes: {
-    //   type: DataTypes.STRING,
-    // },
+    }
   },
   {
     freezeTableName: true,

@@ -3,10 +3,12 @@ import UserData from "../models/userdataModel.js";
 import History from "../models/historyModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 import {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
 } from "../config/Database.js";
+
 
 export const users = async (req, res) => {
   try {
@@ -112,7 +114,7 @@ export const login = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true, // set to false for local development
+      secure: false, // set to false for local development
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
@@ -345,4 +347,109 @@ export const logout = async (req, res) => {
   );
   res.clearCookie("refreshToken");
   return res.sendStatus(200);
+};
+
+export const chronotype = async (req, res)  => {
+  try {
+    const userId = req.userId; 
+    const latestHistory = await History.findOne({
+      where: { id_user: userId },
+      order: [['created_at', 'DESC']],
+    });
+
+    if (!latestHistory) {
+      return res.status(404).json({ msg: "Data history tidak ditemukan" });
+    }
+
+
+    const wakeupHour = parseInt(latestHistory.wakeuptime.split(':')[0]); 
+    const bedtimeHour = parseInt(latestHistory.bedtime.split(':')[0]); 
+
+    // Kirim data ke API Flask
+    const response = await axios.post('https://turuku-ml-api-800638181621.asia-southeast2.run.app/chronotype', {
+      wakeup_hour: wakeupHour,
+      bedtime_hour: bedtimeHour,
+    });
+
+    const chronotypeResponse = response.data.chronotype; 
+
+   
+    let chronotypeValue;
+    switch (chronotypeResponse) {
+      case 'Bear':
+        chronotypeValue = 0;
+        break;
+      case 'Dolphin':
+        chronotypeValue = 1;
+        break;
+      case 'Lion':
+        chronotypeValue = 2;
+        break;
+      case 'Wolf':
+        chronotypeValue = 3;
+        break;
+      default:
+        return res.status(400).json({ msg: "Chronotype tidak valid" });
+    }
+
+    await UserData.update(
+      { chronotype: chronotypeValue },
+      { where: { id_user: userId } }
+    );
+
+    res.json({ msg: "Chronotype berhasil diperbarui", chronotype: chronotypeValue });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+  }
+};
+
+
+export const sleeprecomenadation = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const latestHistory = await History.findOne({
+      where: { id_user: userId },
+      order: [['created_at', 'DESC']],
+    });
+
+    if (!latestHistory) {
+      return res.status(404).json({ msg: "Data history tidak ditemukan" });
+    }
+
+    const userData = await UserData.findOne({
+      where: { id_user: userId },
+    });
+
+    if (!userData) {
+      return res.status(404).json({ msg: "Data userdata tidak ditemukan" });
+    }
+
+    const dataToSend = {
+      daily_steps: parseFloat((latestHistory.daily_steps / 1000).toFixed(3)), 
+      physical_activity_level: parseInt(latestHistory.physical_activity_level, 10),
+      age: parseInt(userData.age,10),
+      gender: parseInt(userData.gender,10),
+      chronotype: parseInt(userData.chronotype,10),
+    };
+    console.log("Data yang akan dikirim ke API Flask:", dataToSend);
+
+    
+
+    // Kirim data ke API Flask
+    const response = await axios.post('https://turuku-ml-api-800638181621.asia-southeast2.run.app/sleep', dataToSend);
+
+    const recommendedSleepDuration = response.data.recommended_sleep_duration;
+
+
+    await History.update(
+      { sleep_recomendation: recommendedSleepDuration },
+      { where: { id: latestHistory.id } } 
+    );
+
+    res.json({ msg: "Data berhasil dikirim dan disimpan", recommended_sleep_duration: recommendedSleepDuration });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+  }
 };

@@ -1,5 +1,5 @@
 import express from 'express';
-import { users, register, login, logout, saveUserData,changePassword, getUserHistory , saveUserHistory} from '../controller/users.js';
+import { users, register, login, logout, saveUserData,changePassword, getUserHistory , saveUserHistory, chronotype, sleeprecomenadation} from '../controller/users.js';
 import { verifyToken } from '../middleware/verifyToken..js';
 import { refreshToken } from '../controller/refreshToken.js';
 
@@ -14,6 +14,8 @@ router.post('/api/v1/userdata', saveUserData)
 router.get('/api/v1/history', getUserHistory)
 router.patch('/api/v1/changePassword', verifyToken, changePassword)
 router.post('/api/v1/history', saveUserHistory)
+router.post('/api/v1/chronotype', verifyToken, chronotype)
+router.post('/api/v1/sleeprecomendation', verifyToken, sleeprecomenadation)
 
 export default router
 
