@@ -3,10 +3,12 @@ import UserData from "../models/userdataModel.js";
 import History from "../models/historyModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 import {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
 } from "../config/Database.js";
+
 
 export const users = async (req, res) => {
   try {
@@ -346,3 +348,61 @@ export const logout = async (req, res) => {
   res.clearCookie("refreshToken");
   return res.sendStatus(200);
 };
+
+export const chronotype = async (req, res)  => {
+  try {
+    const userId = req.userId; // Ambil userId dari token
+    // Ambil data history terbaru untuk user
+    const latestHistory = await History.findOne({
+      where: { id_user: userId },
+      order: [['created_at', 'DESC']],
+    });
+
+    if (!latestHistory) {
+      return res.status(404).json({ msg: "Data history tidak ditemukan" });
+    }
+
+    // Ambil wakeuptime dan bedtime
+    const wakeupHour = parseInt(latestHistory.wakeuptime.split(':')[0]); // Ambil jam dari wakeuptime dan konversi ke integer
+    const bedtimeHour = parseInt(latestHistory.bedtime.split(':')[0]); 
+
+    // Kirim data ke API Flask
+    const response = await axios.post('http://127.0.0.1:5000/chronotype', {
+      wakeup_hour: wakeupHour,
+      bedtime_hour: bedtimeHour,
+    });
+
+    const chronotypeResponse = response.data.chronotype; // Ambil chronotype dari response
+
+    // Mapping chronotype ke angka
+    let chronotypeValue;
+    switch (chronotypeResponse) {
+      case 'Bear':
+        chronotypeValue = 0;
+        break;
+      case 'Dolphin':
+        chronotypeValue = 1;
+        break;
+      case 'Lion':
+        chronotypeValue = 2;
+        break;
+      case 'Wolf':
+        chronotypeValue = 3;
+        break;
+      default:
+        return res.status(400).json({ msg: "Chronotype tidak valid" });
+    }
+
+    // Update chronotype di tabel userdata
+    await UserData.update(
+      { chronotype: chronotypeValue },
+      { where: { id_user: userId } }
+    );
+
+    res.json({ msg: "Chronotype berhasil diperbarui", chronotype: chronotypeValue });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+  }
+};
+
