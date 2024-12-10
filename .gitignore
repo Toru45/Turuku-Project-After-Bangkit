@@ -131,3 +131,5 @@ dist
 request.rest
 Turuku-service-account.json
 *.rest
+eslint.config.mjs
+

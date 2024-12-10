@@ -453,3 +453,23 @@ export const sleeprecomenadation = async (req, res) => {
     res.status(500).json({ msg: "Terjadi kesalahan pada server" });
   }
 };
+
+export const getSleepRecommendation = async (req, res) => {
+  try {
+    const userId = req.userId; 
+
+    const userHistory = await History.findOne({
+      where: { id_user: userId },
+      order: [['created_at', 'DESC']], 
+      attributes: ['sleep_recomendation'], 
+    });
+
+    if (!userHistory) {
+      return res.status(404).json({ msg: "Data history tidak ditemukan" });
+    }
+    res.json({ sleep_recommendation: userHistory.sleep_recomendation });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+  }
+};
