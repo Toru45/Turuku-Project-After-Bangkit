@@ -1,23 +1,26 @@
 import { PubSub } from '@google-cloud/pubsub';
-import { sendWelcomeEmail } from './mailgun.js';
+import { sendWelcomeEmail } from './controller/mailgun.js';
 
 const pubSubClient = new PubSub();
-const subscriptionName = 'welcome-email-sub';
+const subscriptionName = 'welcome-email-sub'; // Ganti dengan nama subscription Anda
 
-async function listenForMessages() {
-    const subscription = pubSubClient.subscription(subscriptionName);
+const subscription = pubSubClient.subscription(subscriptionName);
 
-    const messageHandler = async (message) => {
-        const email = message.data.toString();
-        console.log(`Received message: ${email}`);
+const messageHandler = message => {
+    const email = message.data.toString();
+    console.log(`Received message: ${email}`);
 
-        // Kirim email selamat datang
-        await sendWelcomeEmail(email);
-        message.ack();
-    };
+    // Kirim email selamat datang
+    sendWelcomeEmail(email)
+        .then(() => {
+            console.log(`Email sent to ${email}`);
+            message.ack(); // Acknowledge the message
+        })
+        .catch(error => {
+            console.error('Error sending email:', error);
+            message.nack(); // Nack the message if there was an error
+        });
+};
 
-    subscription.on('message', messageHandler);
-    console.log(`Listening for messages on ${subscriptionName}...`);
-}
-
-listenForMessages().catch(console.error);
+// Listen for new messages
+subscription.on('message', messageHandler);
