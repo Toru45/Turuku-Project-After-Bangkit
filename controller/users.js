@@ -8,6 +8,12 @@ import {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
 } from "../config/Database.js";
+import { PubSub } from '@google-cloud/pubsub';
+import { sendWelcomeEmail } from './mailgun.js';
+
+
+const pubSubClient = new PubSub();
+const topicName = 'welcome-email';
 
 
 export const users = async (req, res) => {
@@ -74,12 +80,17 @@ export const register = async (req, res) => {
       updated_at: new Date(),
     });
     //jika users berhasil tersimpan ke dalam db
-    res.json({ msg: "Register Berhasil" });
-  } catch (error) {
-    console.log(error);
-  }
-};
+    await sendWelcomeEmail(email);
+    const dataBuffer = Buffer.from(email);
+    await pubSubClient.topic(topicName).publishMessage({ data: dataBuffer });
+        console.log(`Message ${email} published to topic ${topicName}`);
 
+        res.json({ msg: "Register Berhasil" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    }
+};
 //function login
 export const login = async (req, res) => {
   try {
@@ -467,6 +478,8 @@ export const getSleepRecommendation = async (req, res) => {
     if (!userHistory) {
       return res.status(404).json({ msg: "Data history tidak ditemukan" });
     }
+
+
     res.json({ sleep_recommendation: userHistory.sleep_recomendation });
   } catch (error) {
     console.error(error);
