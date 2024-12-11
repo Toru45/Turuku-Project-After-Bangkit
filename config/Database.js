@@ -1,8 +1,5 @@
 import { Sequelize } from "sequelize";
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
-import dotenv from 'dotenv';
-dotenv.config();
-
 
 const client = new SecretManagerServiceClient();
 
@@ -12,6 +9,7 @@ async function getSecret(secretName) {
   });
   return version.payload.data.toString('utf8');
 }
+
 
 const ACCESS_TOKEN_SECRET = await getSecret('projects/bangkit-c242-ps070/secrets/ACCESS_TOKEN_SECRET/versions/latest');
 const REFRESH_TOKEN_SECRET = await getSecret('projects/bangkit-c242-ps070/secrets/REFRESH_TOKEN_SECRET/versions/latest');
