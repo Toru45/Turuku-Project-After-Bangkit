@@ -486,3 +486,23 @@ export const getSleepRecommendation = async (req, res) => {
     res.status(500).json({ msg: "Terjadi kesalahan pada server" });
   }
 };
+
+
+export const getUserData = async (req, res) => {
+  try {
+    const userId = req.userId; 
+    const userData = await UserData.findAll({
+      where: { id_user: userId },
+    });
+
+    if (!userData || userData.length === 0) {
+      return res.status(404).json({ msg: "Data pengguna tidak ditemukan" });
+    }
+
+    res.json(userData); 
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+  }
+};
+
