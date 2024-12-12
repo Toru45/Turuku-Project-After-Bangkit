@@ -15,6 +15,7 @@ export const refreshToken = async (req,res) => {
       }
     });
     if (!user[0]) return res.sendStatus(403);
+    // eslint-disable-next-line no-unused-vars
     jwt.verify(refreshToken,REFRESH_TOKEN_SECRET, (err, decoded) => {
       if (err) return res.sendStatus(403);
       const userId = user[0].id;
