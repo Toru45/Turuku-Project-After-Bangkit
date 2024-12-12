@@ -1,20 +1,13 @@
 import mailgun from 'mailgun-js';
-import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
+import dotenv from "dotenv";
 
-const client = new SecretManagerServiceClient();
-
-async function getSecret(secretName) {
-    const [version] = await client.accessSecretVersion({
-        name: secretName,
-    });
-    return version.payload.data.toString('utf8');
-}
+dotenv.config();
 
 export async function sendWelcomeEmail(email) {
     console.log(`Attempting to send email to: ${email}`);
-    const apiKey = await getSecret('projects/bangkit-c242-ps070/secrets/MAILGUN_API_KEY/versions/latest');
-    const domain = await getSecret('projects/bangkit-c242-ps070/secrets/MAILGUN_DOMAIN/versions/latest');
-    const fromEmail = await getSecret('projects/bangkit-c242-ps070/secrets/MAILGUN_FROM_EMAIL/versions/latest');
+    const apiKey = process.env.MAILGUN_API_KEY;
+    const domain = process.env.MAILGUN_DOMAIN;
+    const fromEmail =process.env.MAILGUN_FROM_EMAIL;
 
     const mg = mailgun({ apiKey, domain });
 
