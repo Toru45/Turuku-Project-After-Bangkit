@@ -68,11 +68,9 @@ export const register = async (req, res) => {
   //jika pass cocok
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(password, salt);
-  const id = (await Users.count()) + 1;
 
   try {
     await Users.create({
-      id: id,
       name: name,
       email: email,
       password: hashPassword,
@@ -448,7 +446,7 @@ export const sleeprecomenadation = async (req, res) => {
     
 
     // Kirim data ke API Flask
-    const response = await axios.post('https://turuku-ml-api-800638181621.asia-southeast2.run.app/sleep', dataToSend);
+    const response = await axios.post(process.env.TURUKU_ML_API, dataToSend);
 
     const recommendedSleepDuration = response.data.recommended_sleep_duration;
 
