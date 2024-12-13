@@ -133,3 +133,5 @@ request.rest
 Turuku Open API.YAML
 .env
 Turuku-service-account.json
+*.rest
+local.rest
