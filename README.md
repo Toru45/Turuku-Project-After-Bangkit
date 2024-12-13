@@ -52,7 +52,6 @@ We are using OPEN API for documentating our API. For reading it, you must :
   * If you want to import database from terminal :
     <pre>mysql -u YOUR_USERNAME -p</pre>
     <pre>USE YOUR_DATABASE_NAME;</pre>
-    <pre>USE YOUR_DATABASE_NAME;</pre>
     Then copy the path to `turuku.sql` in config folder
     <pre>source /path/to/your/turuku.sql;</pre>
   * If you want to import database from phpMyAdmin :
