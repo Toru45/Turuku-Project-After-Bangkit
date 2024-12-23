@@ -1,12 +1,6 @@
 ![Turuku_Logo (1)](https://github.com/user-attachments/assets/d85e52f8-af2f-4b2a-ad53-fcec0b7a5008)
-# TEAM CLOUD COMPUTING
-This is the repository is for CLOUD COMPUTING PROJECT C22-PS064 TEAM. This contains all the necessary files and documents for the project.
 
-## MEET CLOUD COMPUTING TEAM!
-| Learning Path      | Student ID   | Name                                                 | University                                          |
-| ------------------ | ------------ | ---------------------------------------------------- | --------------------------------------------------- |
-| Cloud Computing    | C006B4KY1356 | [Faiq Radiansyah](https://github.com/Toru45)        | Universitas Brawijaya                               |
-| Cloud Computing    | C193B4KY3692 | [Rangga Saputra](https://github.com/I4MRangga)      | Universitas Bina Sarana Informatika    
+
 
 ## ARCHITECTURE 
 ![download (1)](https://github.com/user-attachments/assets/2eb232e2-2c5a-4784-bb7b-384d44aa2b68)
